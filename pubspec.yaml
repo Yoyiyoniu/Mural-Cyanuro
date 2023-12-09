@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_animate: ^4.3.0
-
+  confetti: ^0.7.0
   
 
 dev_dependencies:
@@ -22,7 +22,6 @@ flutter:
   
   assets:
     - assets/images/
-    - assets/test-images/
     - assets/title/
     
   fonts:

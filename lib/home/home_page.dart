@@ -1,11 +1,12 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:confetti/confetti.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:mural_cyanurito/home/Text/Pup_Text.dart';
+import 'package:mural_cyanurito/home/Text/pup_text.dart';
 import 'package:mural_cyanurito/home/image/pup_image.dart';
 
 class HomePage extends StatefulWidget {
@@ -47,23 +48,35 @@ class _ImageGridState extends State<ImageGrid> {
   Set<String> deblurredImageSet = <String>{};
   Set<String> deblurredTextSet = <String>{};
 
+  bool isPlaying = false;
+  final controller = ConfettiController();
+
   @override
   void initState() {
     super.initState();
+    setState(() {
+      isPlaying = controller.state == ConfettiControllerState.playing;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
   }
 
   Future<List<String>> loadImageAssetsList() async {
     final assetManifest = await AssetManifest.loadFromAssetBundle(rootBundle);
     return assetManifest
         .listAssets()
-        .where((string) => string.startsWith("assets/test-images/"))
+        .where((string) => string.startsWith("assets/images/"))
         .toList();
   }
 
   @override
   Widget build(BuildContext context) {
     double blur = 15;
-    double textBlur = 3;
+    double textBlur = 5;
     return FutureBuilder<List<String>>(
       future: loadImageAssetsList(),
       builder: (context, snapshot) {
@@ -109,7 +122,7 @@ class _ImageGridState extends State<ImageGrid> {
                           : ImageFilter.blur(sigmaX: blur, sigmaY: blur),
                       child: Container(
                         height: 320.0,
-                        width: 270.0,
+                        width: 280.0,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: Colors.primaries[
@@ -127,6 +140,7 @@ class _ImageGridState extends State<ImageGrid> {
                     imageFilter: deblurredTextSet.contains(textUniqueId)
                         ? ImageFilter.blur(sigmaX: 0, sigmaY: 0)
                         : ImageFilter.blur(sigmaX: textBlur, sigmaY: textBlur),
+                    // add confeti
                     child: RichText(
                       text: TextSpan(
                         text: fileNameWithoutExtension,
@@ -136,16 +150,28 @@ class _ImageGridState extends State<ImageGrid> {
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            Future.delayed(const Duration(milliseconds: 500),
-                                () {
-                              setState(() {
-                                // Toggle selected text
-                                if (!deblurredTextSet.contains(textUniqueId)) {
-                                  deblurredTextSet.add(textUniqueId);
+                            Future.delayed(
+                              const Duration(milliseconds: 500),
+                              () {
+                                if (isPlaying) {
+                                  controller.stop();
+                                } else {
+                                  controller.play();
                                 }
-                              });
-                              pupText(context, fileNameWithoutExtension);
-                            });
+
+                                setState(() {
+                                  controller.play();
+
+                                  // Toggle selected text
+                                  if (!deblurredTextSet
+                                      .contains(textUniqueId)) {
+                                    deblurredTextSet.add(textUniqueId);
+                                  }
+                                });
+                                pupText(context, fileNameWithoutExtension,
+                                    controller);
+                              },
+                            );
 
                             debugPrint('Tapped on $textUniqueId');
                           },
