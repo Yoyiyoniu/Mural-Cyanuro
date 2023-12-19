@@ -138,7 +138,6 @@ class _ImageGridState extends State<ImageGrid> {
                     imageFilter: deblurredTextSet.contains(textUniqueId)
                         ? ImageFilter.blur(sigmaX: 0, sigmaY: 0)
                         : ImageFilter.blur(sigmaX: textBlur, sigmaY: textBlur),
-                    // TODO: AGREGARLE UN MAXIMO AL CONTAINER DE LA IMAGEN
                     child: RichText(
                       text: TextSpan(
                         text: fileNameWithoutExtension,
