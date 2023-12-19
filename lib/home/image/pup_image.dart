@@ -17,16 +17,16 @@ Future<dynamic> pupImage(
               fit: BoxFit.cover,
             ),
           ),
-          height: 800,
+          height: 700,
           width: 500,
         ),
       )
           .animate()
           .moveY()
-          .fadeIn(duration: 200.ms)
+          .fadeIn(duration: 300.ms)
+          .shake(hz: 3, rotation: 0.05, duration: 300.ms)
           .then()
-          .shake(hz: 3)
-          .scaleXY(end: 1.2 / 1.5);
+          .scaleXY(end: 1.2 / 1.1);
     },
   );
 }

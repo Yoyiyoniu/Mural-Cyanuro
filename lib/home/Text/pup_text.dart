@@ -38,14 +38,9 @@ Future<dynamic> pupText(
       )
           .animate()
           .moveY()
-          .fadeIn(duration: 300.ms)
+          .scaleXY(begin: 1, end: 1.1, duration: 250.ms)
           .then()
-          .shimmer(
-              duration: const Duration(milliseconds: 800),
-              delay: 400.ms,
-              color: const Color.fromARGB(255, 59, 226, 255),
-              size: 25)
-          .shake(hz: 3)
+          .shake(hz: 2, rotation: 0.02, duration: 500.ms)
           .scaleXY(end: 1.1);
     },
   );

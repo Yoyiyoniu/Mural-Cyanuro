@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
           'assets/title/cyanuritoletra.png',
           fit: BoxFit.cover,
           height: 100,
+          alignment: Alignment.center,
         ),
       ),
       body: const ImageGrid(),
@@ -105,16 +106,13 @@ class _ImageGridState extends State<ImageGrid> {
                     onTap: () {
                       debugPrint('Tapped on $uniqueId');
                       setState(() {
-                        // Toggle selected image
-
                         if (!deblurredImageSet.contains(uniqueId)) {
                           deblurredImageSet.add(uniqueId);
                         }
                       });
                       pupImage(context, imageAssetsList, index);
                     },
-
-                    //? ------------------ Imagen ------------------
+                    //? <------------------ Imagen ------------------>
 
                     child: ImageFiltered(
                       imageFilter: deblurredImageSet.contains(uniqueId)
@@ -135,18 +133,19 @@ class _ImageGridState extends State<ImageGrid> {
                       ),
                     ),
                   ),
-                  //? ------------------ Texto debajo de la imagen ------------------
+                  //? <------------------ Texto debajo de la imagen ------------------>
                   ImageFiltered(
                     imageFilter: deblurredTextSet.contains(textUniqueId)
                         ? ImageFilter.blur(sigmaX: 0, sigmaY: 0)
                         : ImageFilter.blur(sigmaX: textBlur, sigmaY: textBlur),
-                    // add confeti
+                    // TODO: AGREGARLE UN MAXIMO AL CONTAINER DE LA IMAGEN
                     child: RichText(
                       text: TextSpan(
                         text: fileNameWithoutExtension,
                         style: const TextStyle(
                           fontSize: 20,
                           fontFamily: 'SignikaNegative',
+                          color: Color.fromARGB(255, 36, 35, 35),
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
@@ -158,11 +157,8 @@ class _ImageGridState extends State<ImageGrid> {
                                 } else {
                                   controller.play();
                                 }
-
                                 setState(() {
                                   controller.play();
-
-                                  // Toggle selected text
                                   if (!deblurredTextSet
                                       .contains(textUniqueId)) {
                                     deblurredTextSet.add(textUniqueId);
@@ -172,7 +168,6 @@ class _ImageGridState extends State<ImageGrid> {
                                     controller);
                               },
                             );
-
                             debugPrint('Tapped on $textUniqueId');
                           },
                       ),
@@ -188,14 +183,16 @@ class _ImageGridState extends State<ImageGrid> {
           );
         } else {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              semanticsLabel: 'Cargando imágenes',
+            ),
           );
         }
       },
     )
         .animate()
-        .fadeIn(duration: const Duration(milliseconds: 500))
-        .slideY(begin: -0.5, duration: const Duration(milliseconds: 400))
-        .shimmer(duration: 500.ms);
+        .fadeIn(duration: 500.ms)
+        .slideY(begin: -0.5, duration: 400.ms)
+        .flipV(curve: Curves.easeIn, begin: 0.5);
   }
 }
