@@ -84,6 +84,8 @@ class _ImageGridState extends State<ImageGrid> {
         if (snapshot.connectionState == ConnectionState.done) {
           final imageAssetsList = snapshot.data;
 
+          imageAssetsList?.shuffle();
+
           return GridView.builder(
             key: const PageStorageKey<String>('page'),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
