@@ -1,17 +1,16 @@
 name: mural_cyanurito
 description: "Dennis Mural Cyanurito"
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
-  sdk: '>=3.2.1 <4.0.0'
+  sdk: ">=3.2.1 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_animate: ^4.3.0
   confetti: ^0.7.0
-  
 
 dev_dependencies:
   flutter_test:
@@ -19,14 +18,17 @@ dev_dependencies:
   flutter_lints: ^3.0.1
 
 flutter:
-  
   assets:
     - assets/images/
     - assets/title/
-    
+
   fonts:
     - family: SignikaNegative
       fonts:
         - asset: fonts/SignikaNegative-Regular.ttf
+
+    - family: Pacifico-Regular
+      fonts:
+        - asset: fonts/Pacifico-Regular.ttf
 
   uses-material-design: true

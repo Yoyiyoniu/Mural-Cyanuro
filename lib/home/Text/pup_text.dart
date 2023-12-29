@@ -22,7 +22,7 @@ Future<dynamic> pupText(
                 fileNameWithoutExtension,
                 style: const TextStyle(
                   fontSize: 55,
-                  fontFamily: 'SignikaNegative',
+                  fontFamily: 'Pacifico-Regular',
                   fontStyle: FontStyle.italic,
                   color: Color.fromARGB(255, 241, 236, 236),
                 ),

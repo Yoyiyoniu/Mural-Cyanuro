@@ -14,7 +14,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Mural Cyanurito',
       theme: ThemeData(
-        fontFamily: 'SignikaNegative',
+        fontFamily: 'Pacifico-Regular',
         useMaterial3: true,
       ),
       home: const HomePage(),

@@ -48,15 +48,28 @@ class ImageGrid extends StatefulWidget {
 class _ImageGridState extends State<ImageGrid> {
   Set<String> deblurredImageSet = <String>{};
   Set<String> deblurredTextSet = <String>{};
-
   bool isPlaying = false;
   final controller = ConfettiController();
+  List<String> imageAssetsList = [];
 
   @override
   void initState() {
     super.initState();
+    loadImages();
     setState(() {
       isPlaying = controller.state == ConfettiControllerState.playing;
+    });
+  }
+
+  Future<void> loadImages() async {
+    final assetManifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final assets = assetManifest
+        .listAssets()
+        .where((string) => string.startsWith("assets/images/"))
+        .toList();
+    assets.shuffle();
+    setState(() {
+      imageAssetsList = assets;
     });
   }
 
@@ -66,36 +79,27 @@ class _ImageGridState extends State<ImageGrid> {
     controller.dispose();
   }
 
-  Future<List<String>> loadImageAssetsList() async {
-    final assetManifest = await AssetManifest.loadFromAssetBundle(rootBundle);
-    return assetManifest
-        .listAssets()
-        .where((string) => string.startsWith("assets/images/"))
-        .toList();
-  }
-
   @override
   Widget build(BuildContext context) {
-    double blur = 15;
+    double imageBlur = 20;
     double textBlur = 5;
-    return FutureBuilder<List<String>>(
-      future: loadImageAssetsList(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          final imageAssetsList = snapshot.data;
 
-          imageAssetsList?.shuffle();
-
-          return GridView.builder(
+    return imageAssetsList.isEmpty
+        ? const Center(
+            child: CircularProgressIndicator(
+              semanticsLabel: 'Cargando imágenes',
+            ),
+          )
+        : GridView.builder(
             key: const PageStorageKey<String>('page'),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
               crossAxisSpacing: 8.0,
               mainAxisSpacing: 30.0,
             ),
-            itemCount: imageAssetsList?.length,
+            itemCount: imageAssetsList.length,
             itemBuilder: (context, index) {
-              String fileName = imageAssetsList![index].split('/').last;
+              String fileName = imageAssetsList[index].split('/').last;
               String fileNameWithoutExtension =
                   fileName.substring(0, fileName.length - 4);
               String uniqueId = 'id_$index';
@@ -114,12 +118,11 @@ class _ImageGridState extends State<ImageGrid> {
                       });
                       pupImage(context, imageAssetsList, index);
                     },
-                    //? <------------------ Imagen ------------------>
-
                     child: ImageFiltered(
                       imageFilter: deblurredImageSet.contains(uniqueId)
                           ? ImageFilter.blur(sigmaX: 0, sigmaY: 0)
-                          : ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                          : ImageFilter.blur(
+                              sigmaX: imageBlur, sigmaY: imageBlur),
                       child: Container(
                         height: 320.0,
                         width: 280.0,
@@ -135,7 +138,6 @@ class _ImageGridState extends State<ImageGrid> {
                       ),
                     ),
                   ),
-                  //? <------------------ Texto debajo de la imagen ------------------>
                   ImageFiltered(
                     imageFilter: deblurredTextSet.contains(textUniqueId)
                         ? ImageFilter.blur(sigmaX: 0, sigmaY: 0)
@@ -145,8 +147,8 @@ class _ImageGridState extends State<ImageGrid> {
                         text: fileNameWithoutExtension,
                         style: const TextStyle(
                           fontSize: 20,
-                          fontFamily: 'SignikaNegative',
-                          color: Color.fromARGB(255, 36, 35, 35),
+                          color: Colors.white,
+                          fontFamily: 'Pacifico-Regular',
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
@@ -178,22 +180,5 @@ class _ImageGridState extends State<ImageGrid> {
               );
             },
           );
-        } else if (snapshot.hasError) {
-          return const Center(
-            child: Text('Error al cargar la lista de imágenes'),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(
-              semanticsLabel: 'Cargando imágenes',
-            ),
-          );
-        }
-      },
-    )
-        .animate()
-        .fadeIn(duration: 500.ms)
-        .slideY(begin: -0.5, duration: 400.ms)
-        .flipV(curve: Curves.easeIn, begin: 0.5);
   }
 }
