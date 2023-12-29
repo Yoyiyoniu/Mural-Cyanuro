@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:confetti/confetti.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:mural_cyanurito/home/Text/pup_text.dart';
 import 'package:mural_cyanurito/home/image/pup_image.dart';
 
@@ -17,23 +17,67 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isAppBarVisible = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(130, 184, 228, 1),
-      appBar: AppBar(
-        toolbarHeight: 91,
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Image.asset(
-          'assets/title/cyanuritoletra.png',
-          fit: BoxFit.cover,
-          height: 100,
-          alignment: Alignment.center,
-        ),
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: <Widget>[
+          if (_isAppBarVisible)
+            SliverAppBar(
+              expandedHeight: 100.0,
+              pinned: true,
+              floating: true,
+              snap: true,
+              actions: <Widget>[
+                IconButton(
+                  icon: const Icon(
+                    Icons.keyboard_double_arrow_up_sharp,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isAppBarVisible = !_isAppBarVisible;
+                    });
+                  },
+                ),
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Image.asset(
+                  'assets/title/cyanuritoletra.png',
+                  fit: BoxFit.cover,
+                  height: 60,
+                  alignment: Alignment.center,
+                ),
+              ),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+          const SliverFillRemaining(
+            child: ImageGrid(),
+          ),
+        ],
       ),
-      body: const ImageGrid(),
+      floatingActionButton: !_isAppBarVisible
+          ? FloatingActionButton(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: const Icon(
+                Icons.keyboard_double_arrow_down_sharp,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isAppBarVisible = !_isAppBarVisible;
+                });
+              },
+            )
+          : null,
     );
   }
 }
